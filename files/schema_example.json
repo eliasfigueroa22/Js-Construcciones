@@ -1,0 +1,337 @@
+{
+  "schema_version": "1.0",
+  "project": "JS Construcciones Data Architecture",
+  "description": "Anonymized data structure example for dimensional model",
+  
+  "fact_tables": {
+    "FactCompra": {
+      "description": "Material purchases across all projects",
+      "record_count": 5000,
+      "sample_records": [
+        {
+          "CompraNro": 1,
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "SectorID": "CLIENT_A - PROJECT_001 - GENERAL",
+          "ProveedorID": "SUPPLIER_001",
+          "RubroID": "ALB",
+          "FechaCompra": "2024-04-18",
+          "NumeroDocumento": "001-001-0000001",
+          "TipoDocumento": "FACTURA",
+          "Descripcion": "Construction materials",
+          "Cantidad": 1.00,
+          "Unidad": "GL",
+          "PrecioUnitario": null,
+          "MontoTotal": 2800000,
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "FactPago": {
+      "description": "Payments to workers and contractors",
+      "record_count": 1800,
+      "sample_records": [
+        {
+          "PagoNro": 1,
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "SectorID": "CLIENT_A - PROJECT_001 - GENERAL",
+          "TrabajadorID": "WORKER_001",
+          "RubroID": "ALB",
+          "FechaPago": "2024-01-03",
+          "Concepto": "Payment for work completed",
+          "TipoPago": "PAGO",
+          "MontoPago": 1000000,
+          "MetodoPago": "EFECTIVO",
+          "PresupuestoSubcontratistaID": null,
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "FactIngreso": {
+      "description": "Client payments and project income",
+      "record_count": 50,
+      "sample_records": [
+        {
+          "IngresoNro": 1,
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "FechaIngreso": "2025-04-04",
+          "FechaFactura": null,
+          "NumeroFactura": "001-001-0000858",
+          "TipoIngreso": null,
+          "Concepto": "Project completion payment",
+          "MontoFacturado": null,
+          "MontoRecibido": 25338797,
+          "EstadoCobro": "COBRADO",
+          "FechaCobro": null,
+          "MetodoPago": null,
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "FactDeuda": {
+      "description": "Worker debts and advances",
+      "record_count": 10,
+      "sample_records": [
+        {
+          "DeudaNro": 1,
+          "TrabajadorID": "WORKER_003",
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "TipoDeuda": "PRESTAMO",
+          "FechaSolicitud": "2024-04-15",
+          "MontoDeuda": 3000000,
+          "Estado": "ACTIVO",
+          "Observaciones": "Loan for tools"
+        }
+      ]
+    },
+    
+    "FactPagoDeuda": {
+      "description": "Debt payment tracking",
+      "record_count": 15,
+      "sample_records": [
+        {
+          "PagoDeudaNro": 1,
+          "DeudaID": 1,
+          "FechaPago": "2024-05-15",
+          "MontoPagado": 500000,
+          "MetodoPago": "DESCUENTO_SUELDO",
+          "Observaciones": "Installment 1/6"
+        }
+      ]
+    },
+    
+    "FactPresupuestoSubcontratista": {
+      "description": "Subcontractor budget tracking",
+      "record_count": 20,
+      "sample_records": [
+        {
+          "PresupuestoSubcontratistaNro": 1,
+          "TrabajadorID": "WORKER_001",
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "SectorID": null,
+          "RubroID": "ALB",
+          "FechaPresupuesto": "2024-04-20",
+          "ConceptoDescripcion": "Main structure masonry",
+          "MontoPresupuestado": 25000000,
+          "PorcentajeFacturacion": "50%",
+          "Estado": "VIGENTE",
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "FactFacturacionSubcontratista": {
+      "description": "Subcontractor invoicing",
+      "record_count": 10,
+      "sample_records": [
+        {
+          "FacturacionNro": 1,
+          "PresupuestoSubcontratistaID": 1,
+          "FechaFactura": "2024-05-10",
+          "NumeroFactura": "001-001-0000100",
+          "MontoFacturado": 2500000,
+          "PorcentajeAplicado": "50%",
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "FactComprasPersonal": {
+      "description": "Owner's personal expenses",
+      "record_count": 1800,
+      "sample_records": [
+        {
+          "GastoPersonalNro": 1,
+          "ProveedorID": "PERSONAL_SUPPLIER_001",
+          "FechaGasto": "2024-05-08",
+          "Descripcion": "Fuel",
+          "Cantidad": 1,
+          "Unidad": "GL",
+          "MontoGasto": 100000,
+          "TipoDocumento": "FACTURA",
+          "NumeroDocumento": null,
+          "Observaciones": null
+        }
+      ]
+    }
+  },
+  
+  "dimension_tables": {
+    "DimObras": {
+      "description": "Construction projects",
+      "record_count": 45,
+      "sample_records": [
+        {
+          "ObraNro": 1,
+          "NombreObra": "PROJECT_001",
+          "ClienteID": "CLIENT_A",
+          "Clave": "CLIENT_A - PROJECT_001",
+          "FechaInicio": "2024-07-01",
+          "FechaFinEstimada": null,
+          "FechaFinReal": null,
+          "Ubicacion_Ciudad": "CITY_NAME",
+          "Ubicacion_Zona": null,
+          "Ubicacion_Direccion": null,
+          "EstadoObra": "ACTIVO",
+          "CategoriaObra": "OBRA",
+          "MontoContrato": null,
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "DimClientes": {
+      "description": "Company clients",
+      "record_count": 9,
+      "sample_records": [
+        {
+          "ClienteNro": 1,
+          "NombreCliente": "CLIENT_A",
+          "RUC": null,
+          "Direccion": null,
+          "Telefono": null,
+          "Email": null,
+          "TipoCliente": "Empresa",
+          "FechaRegistro": "2025-12-17"
+        }
+      ]
+    },
+    
+    "DimProveedores": {
+      "description": "Company suppliers",
+      "record_count": 336,
+      "sample_records": [
+        {
+          "ProveedorNro": 1,
+          "NombreProveedor": "SUPPLIER_001",
+          "RUC": null,
+          "Telefono": null,
+          "Email": null,
+          "FechaRegistro": "2025-12-17"
+        }
+      ]
+    },
+    
+    "DimProveedoresPersonal": {
+      "description": "Personal expense vendors",
+      "record_count": 270,
+      "sample_records": [
+        {
+          "ProveedorPersonalNro": 1,
+          "NombreProveedor": "PERSONAL_SUPPLIER_001",
+          "RUC": null,
+          "Telefono": null,
+          "Observaciones": null
+        }
+      ]
+    },
+    
+    "DimTrabajador": {
+      "description": "Workers and contractors",
+      "record_count": 112,
+      "sample_records": [
+        {
+          "TrabajadorNro": 1,
+          "NombreCompleto": "WORKER_001",
+          "TipoPersonal": "SUBCONTRATISTA",
+          "RUC_CI": null,
+          "Telefono": null,
+          "RubroID": null
+        }
+      ]
+    },
+    
+    "DimRubro": {
+      "description": "Expense categories",
+      "record_count": 39,
+      "sample_records": [
+        {
+          "RubroNro": 1,
+          "Rubro": "ALB",
+          "NombreCompleto": "ALBAÑILERIA"
+        },
+        {
+          "RubroNro": 2,
+          "Rubro": "GG",
+          "NombreCompleto": "GASTOS GENERALES"
+        },
+        {
+          "RubroNro": 3,
+          "Rubro": "ELEC",
+          "NombreCompleto": "ELECTRICIDAD"
+        }
+      ]
+    },
+    
+    "DimSector": {
+      "description": "Project sectors/areas",
+      "record_count": 54,
+      "sample_records": [
+        {
+          "SectorNro": 1,
+          "ObraID": "CLIENT_A - PROJECT_001",
+          "NombreSector": "GENERAL",
+          "Clave": "CLIENT_A - PROJECT_001 - GENERAL",
+          "Descripcion": null
+        }
+      ]
+    }
+  },
+  
+  "relationships": [
+    {
+      "from": "FactCompra.ObraID",
+      "to": "DimObras.Clave",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactCompra.ProveedorID",
+      "to": "DimProveedores.NombreProveedor",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactCompra.SectorID",
+      "to": "DimSector.Clave",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactCompra.RubroID",
+      "to": "DimRubro.Rubro",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactPago.TrabajadorID",
+      "to": "DimTrabajador.NombreCompleto",
+      "type": "many-to-one"
+    },
+    {
+      "from": "DimObras.ClienteID",
+      "to": "DimClientes.NombreCliente",
+      "type": "many-to-one"
+    },
+    {
+      "from": "DimSector.ObraID",
+      "to": "DimObras.Clave",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactDeuda.TrabajadorID",
+      "to": "DimTrabajador.NombreCompleto",
+      "type": "many-to-one"
+    },
+    {
+      "from": "FactPagoDeuda.DeudaID",
+      "to": "FactDeuda.DeudaNro",
+      "type": "many-to-one"
+    }
+  ],
+  
+  "metadata": {
+    "currency": "PYG (Paraguayan Guaraní)",
+    "date_format": "DD/MM/YYYY",
+    "data_period": "July 2024 - January 2026",
+    "total_records": "6800+"
+  }
+}
