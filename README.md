@@ -124,45 +124,78 @@ No data was discarded. Everything that existed in the old files made it into the
 **Deduplication challenge:**
 
 ```python
-# Fuzzy matching approach used
 import pandas as pd
 from rapidfuzz import fuzz
 
-# 1. Load data
-df = pd.read_csv('DimProveedores.csv')
-print(f"Total providers: {len(df)}")
-
-# 2. Get list of names (adjust column name if different)
-proveedores = df['NombreProveedor'].dropna().unique().tolist()
-
-# 3. Normalize text (uppercase, trim whitespace)
-def normalize(text):
+def normalize(text: str) -> str:
+    """Normalize text for comparison: uppercase and trim whitespace."""
     return str(text).upper().strip()
 
-# 4. Find potential duplicates
-threshold = 80  # Minimum similarity percentage
-duplicates = []
+def find_duplicates(df: pd.DataFrame, column: str, threshold: int = 80) -> pd.DataFrame:
+    """
+    Find potential duplicates in a DataFrame column using fuzzy matching.
+    
+    Args:
+        df: DataFrame containing the data
+        column: Name of the column to check for duplicates
+        threshold: Minimum similarity percentage (0-100) to consider as duplicate
+    
+    Returns:
+        DataFrame with potential duplicate pairs and their similarity scores
+    """
+    # Get unique values
+    values = df[column].dropna().unique().tolist()
+    
+    duplicates = []
+    
+    for i, val1 in enumerate(values):
+        for val2 in values[i+1:]:
+            score = fuzz.ratio(normalize(val1), normalize(val2))
+            if score >= threshold:
+                duplicates.append({
+                    'Value1': val1,
+                    'Value2': val2,
+                    'Similarity': score
+                })
+    
+    df_duplicates = pd.DataFrame(duplicates)
+    
+    if not df_duplicates.empty:
+        df_duplicates = df_duplicates.sort_values('Similarity', ascending=False)
+    
+    return df_duplicates
 
-for i, prov1 in enumerate(proveedores):
-    for prov2 in proveedores[i+1:]:
-        score = fuzz.ratio(normalize(prov1), normalize(prov2))
-        if score >= threshold:
-            duplicates.append({
-                'Provider1': prov1,
-                'Provider2': prov2,
-                'Similarity': score
-            })
+def main():
+    # Configuration
+    INPUT_FILE = 'DimProveedores.csv'
+    COLUMN_NAME = 'NombreProveedor'
+    OUTPUT_FILE = 'potential_duplicates.csv'
+    THRESHOLD = 80  # Minimum similarity percentage
+    
+    # Load data
+    print(f"Loading data from {INPUT_FILE}...")
+    df = pd.read_csv(INPUT_FILE)
+    print(f"Total records: {len(df)}")
+    
+    # Find duplicates
+    print(f"\nSearching for duplicates (threshold: {THRESHOLD}%)...")
+    df_duplicates = find_duplicates(df, COLUMN_NAME, THRESHOLD)
+    
+    # Display results
+    print(f"\nPotential duplicates found: {len(df_duplicates)}")
+    
+    if not df_duplicates.empty:
+        print("\nTop matches:")
+        print(df_duplicates.head(20).to_string(index=False))
+        
+        # Save to CSV for manual review
+        df_duplicates.to_csv(OUTPUT_FILE, index=False)
+        print(f"\nFull results saved to: {OUTPUT_FILE}")
+    else:
+        print("No duplicates found above threshold.")
 
-# 5. Display results
-df_duplicates = pd.DataFrame(duplicates)
-df_duplicates = df_duplicates.sort_values('Similarity', ascending=False)
-
-print(f"\nPotential duplicates found: {len(df_duplicates)}")
-print(df_duplicates.to_string())
-
-# 6. Save to CSV for review
-df_duplicates.to_csv('potential_duplicates.csv', index=False)
-print("\nFile saved: potential_duplicates.csv")
+if __name__ == "__main__":
+    main()
 ```
 
 **Data cleaning results:**
@@ -364,7 +397,6 @@ js-construcciones-data-architecture/
 Elias Figueroa
 - LinkedIn: [linkedin.com/in/elias-figueroa-a143533a3](https://www.linkedin.com/in/elias-figueroa-a143533a3)
 - Email: eliasfigueroa52@gmail.com
-- Portfolio: [si creás el sitio web]
 
 ---
 
