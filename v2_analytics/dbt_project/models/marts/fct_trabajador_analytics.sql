@@ -2,14 +2,20 @@ with pagos as (
     select * from {{ ref('int_pagos_enriched') }}
 ),
 
+trabajadores as (
+    select airtable_id, nombre_completo
+    from {{ ref('stg_dim_trabajador') }}
+),
+
 deudas as (
     select
-        trabajador_id,
+        t.nombre_completo as trabajador_id,
         count(*) as qty_deudas,
-        sum(case when estado = 'ACTIVO' then monto_deuda else 0 end) as deuda_activa,
-        sum(case when estado = 'PAGADO' then monto_deuda else 0 end) as deuda_pagada
-    from {{ ref('stg_fact_deuda') }}
-    group by trabajador_id
+        sum(case when d.estado = 'ACTIVO' then d.monto_deuda else 0 end) as deuda_activa,
+        sum(case when d.estado = 'PAGADO' then d.monto_deuda else 0 end) as deuda_pagada
+    from {{ ref('stg_fact_deuda') }} d
+    left join trabajadores t on d.trabajador_id = t.airtable_id
+    group by t.nombre_completo
 ),
 
 pago_stats as (

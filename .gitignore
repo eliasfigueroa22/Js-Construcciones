@@ -1,9 +1,11 @@
 # Environment
 .env
 
-# DuckDB
-*.duckdb
+# DuckDB (except sample)
+v2_analytics/warehouse/*.duckdb
+v2_analytics/warehouse/*.duckdb.wal
 *.duckdb.wal
+!v2_analytics/sample/js_construcciones_sample.duckdb
 
 # dbt
 v2_analytics/dbt_project/target/

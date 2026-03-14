@@ -474,6 +474,22 @@ Analytics                            dbt tests + docs
 
 ### How to Run v2.0
 
+#### Quick Start (no API key needed)
+
+The repo includes a sample database with anonymized data — clone and run:
+
+```bash
+pip install -r requirements.txt
+cd v2_analytics/dbt_project
+dbt deps
+dbt run
+dbt test
+# Open the EDA notebook
+jupyter notebook ../analytics/notebooks/eda_js_construcciones.ipynb
+```
+
+#### Full Pipeline (with Airtable credentials)
+
 ```bash
 # 1. Install dependencies
 pip install -r requirements.txt
@@ -504,6 +520,9 @@ v2_analytics/
 │   ├── config.py                  # Airtable table ID mapping
 │   └── airtable_to_duckdb.py     # Extract script (full refresh)
 ├── warehouse/                     # DuckDB file (gitignored)
+├── sample/
+│   ├── generate_sample_db.py      # Anonymization + synthetic data script
+│   └── js_construcciones_sample.duckdb  # Ready-to-use sample DB
 ├── dbt_project/
 │   ├── dbt_project.yml
 │   ├── profiles.yml

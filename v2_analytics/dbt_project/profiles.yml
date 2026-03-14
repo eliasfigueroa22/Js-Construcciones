@@ -3,6 +3,6 @@ js_construcciones:
   outputs:
     dev:
       type: duckdb
-      path: "{{ env_var('DUCKDB_PATH', '../warehouse/js_construcciones.duckdb') }}"
+      path: "{{ env_var('DUCKDB_PATH', '../sample/js_construcciones_sample.duckdb') }}"
       schema: main
       threads: 4

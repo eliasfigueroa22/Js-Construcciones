@@ -1,13 +1,23 @@
 -- Budget vs actual spend analysis per obra x rubro
 -- Uses presupuesto_cliente for budgeted amounts and actual spend from compras + pagos
-with presupuesto as (
+with obras as (
+    select airtable_id, clave from {{ ref('stg_dim_obras') }}
+),
+
+rubros as (
+    select airtable_id, rubro from {{ ref('stg_dim_rubro') }}
+),
+
+presupuesto as (
     select
-        obra_id,
-        rubro_id,
-        sum(monto_total) as monto_presupuestado
-    from {{ ref('stg_fact_presupuesto_cliente') }}
-    where estado = 'APROBADO' or estado is null
-    group by obra_id, rubro_id
+        o.clave as obra_id,
+        r.rubro as rubro_id,
+        sum(pc.monto_total) as monto_presupuestado
+    from {{ ref('stg_fact_presupuesto_cliente') }} pc
+    left join obras o on pc.obra_id = o.airtable_id
+    left join rubros r on pc.rubro_id = r.airtable_id
+    where pc.estado = 'APROBADO' or pc.estado is null
+    group by o.clave, r.rubro
 ),
 
 gasto_materiales as (

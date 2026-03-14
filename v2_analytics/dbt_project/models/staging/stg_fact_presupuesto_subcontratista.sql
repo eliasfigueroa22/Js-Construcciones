@@ -4,6 +4,7 @@ with source as (
 
 renamed as (
     select
+        airtable_id,
         cast("PresupuestoSubcontratistaNro" as integer) as presupuesto_subcontratista_nro,
         cast("TrabajadorID" as varchar) as trabajador_id,
         cast("ObraID" as varchar) as obra_id,

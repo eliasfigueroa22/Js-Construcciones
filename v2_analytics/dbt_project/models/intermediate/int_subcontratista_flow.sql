@@ -54,7 +54,7 @@ select
         else 0
     end as porcentaje_ejecutado
 from presupuestos ps
-left join facturacion f on ps.presupuesto_subcontratista_nro = f.presupuesto_subcontratista_id
+left join facturacion f on ps.airtable_id = f.presupuesto_subcontratista_id
 left join trabajadores t on ps.trabajador_id = t.airtable_id
 left join obras o on ps.obra_id = o.airtable_id
 left join rubros r on ps.rubro_id = r.airtable_id
