@@ -1,0 +1,8 @@
+js_construcciones:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../warehouse/js_construcciones.duckdb') }}"
+      schema: main
+      threads: 4

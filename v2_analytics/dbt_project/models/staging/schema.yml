@@ -1,0 +1,325 @@
+version: 2
+
+models:
+  # ── Fact Tables ──────────────────────────────────────────────
+
+  - name: stg_fact_compra
+    description: Staged material purchases
+    columns:
+      - name: compra_nro
+        description: Primary key
+        tests: [unique, not_null]
+      - name: obra_id
+        description: Airtable record ID linking to dim_obras
+        tests:
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: proveedor_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_proveedores')
+              field: airtable_id
+      - name: rubro_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_rubro')
+              field: airtable_id
+      - name: sector_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_sector')
+              field: airtable_id
+      - name: fecha_compra
+      - name: monto_total
+
+  - name: stg_fact_pago
+    description: Staged worker/contractor payments
+    columns:
+      - name: pago_nro
+        tests: [unique, not_null]
+      - name: obra_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: trabajador_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_trabajador')
+              field: airtable_id
+      - name: rubro_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_rubro')
+              field: airtable_id
+      - name: sector_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_sector')
+              field: airtable_id
+      - name: fecha_pago
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: monto_pago
+        tests: [not_null]
+      - name: tipo_pago
+        tests:
+          - accepted_values:
+              values: ['PAGO', 'ADELANTO', 'PRODUCCION']
+      - name: metodo_pago
+        tests:
+          - accepted_values:
+              values: ['EFECTIVO', 'TRANSFERENCIA', 'DESCONOCIDO']
+
+  - name: stg_fact_ingreso
+    description: Staged client income
+    columns:
+      - name: ingreso_nro
+        tests: [unique, not_null]
+      - name: obra_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: fecha_ingreso
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: estado_cobro
+        tests:
+          - accepted_values:
+              values: ['COBRADO', 'PENDIENTE']
+
+  - name: stg_fact_deuda
+    description: Staged worker debts and advances
+    columns:
+      - name: deuda_nro
+        tests: [unique, not_null]
+      - name: trabajador_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_trabajador')
+              field: airtable_id
+      - name: obra_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: tipo_deuda
+        tests:
+          - accepted_values:
+              values: ['PRESTAMO', 'ADELANTO_PERSONAL', 'COMPRA_PERSONAL']
+      - name: estado
+        tests:
+          - accepted_values:
+              values: ['ACTIVO', 'PAGADO']
+
+  - name: stg_fact_pago_deuda
+    description: Staged debt payments
+    columns:
+      - name: pago_deuda_nro
+        tests: [unique, not_null]
+      - name: deuda_id
+        description: Airtable record ID linking to fact_deuda
+      - name: fecha_pago
+        tests: [not_null]
+      - name: monto_pagado
+        tests: [not_null]
+      - name: metodo_pago
+        tests:
+          - accepted_values:
+              values: ['EFECTIVO', 'DESCUENTO_SUELDO', 'TRANSFERENCIA']
+
+  - name: stg_fact_presupuesto_cliente
+    description: Staged client budgets
+    columns:
+      - name: presupuesto_cliente_nro
+        tests: [unique, not_null]
+      - name: obra_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: rubro_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_rubro')
+              field: airtable_id
+      - name: sector_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_sector')
+              field: airtable_id
+      - name: estado
+        tests:
+          - accepted_values:
+              values: ['APROBADO', 'PENDIENTE', 'RECHAZADO']
+              config:
+                severity: warn
+
+  - name: stg_fact_presupuesto_subcontratista
+    description: Staged subcontractor budgets
+    columns:
+      - name: presupuesto_subcontratista_nro
+        tests: [unique, not_null]
+      - name: trabajador_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_dim_trabajador')
+              field: airtable_id
+      - name: obra_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id
+      - name: rubro_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_dim_rubro')
+              field: airtable_id
+      - name: sector_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_sector')
+              field: airtable_id
+      - name: estado
+        tests:
+          - accepted_values:
+              values: ['VIGENTE', 'FINALIZADO']
+
+  - name: stg_fact_facturacion_subcontratista
+    description: Staged subcontractor invoicing
+    columns:
+      - name: facturacion_nro
+        tests: [unique, not_null]
+      - name: presupuesto_subcontratista_id
+        description: Airtable record ID linking to presupuesto_subcontratista
+      - name: fecha_factura
+        tests: [not_null]
+
+  - name: stg_fact_compras_personal
+    description: Staged owner personal expenses
+    columns:
+      - name: gasto_personal_nro
+        tests: [unique, not_null]
+      - name: proveedor_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_proveedores_personal')
+              field: airtable_id
+      - name: monto_gasto
+
+  # ── Dimension Tables ────────────────────────────────────────
+
+  - name: stg_dim_obras
+    description: Staged construction projects
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: obra_nro
+        tests: [unique, not_null]
+      - name: clave
+        description: Business key (Client - Project - Date)
+        tests: [unique, not_null]
+      - name: cliente_id
+        description: Airtable record ID linking to dim_clientes
+        tests:
+          - relationships:
+              to: ref('stg_dim_clientes')
+              field: airtable_id
+      - name: estado_obra
+        tests:
+          - accepted_values:
+              values: ['ACTIVO', 'FINALIZADO']
+      - name: categoria_obra
+        tests:
+          - accepted_values:
+              values: ['OBRA', 'PROYECTO', 'SERVICIO']
+
+  - name: stg_dim_clientes
+    description: Staged clients
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: cliente_nro
+        tests: [unique, not_null]
+      - name: nombre_cliente
+        tests: [unique, not_null]
+      - name: tipo_cliente
+        tests:
+          - accepted_values:
+              values: ['EMPRESA', 'PERSONA']
+
+  - name: stg_dim_proveedores
+    description: Staged company suppliers
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: proveedor_nro
+        tests: [unique, not_null]
+      - name: nombre_proveedor
+        tests: [unique, not_null]
+
+  - name: stg_dim_proveedores_personal
+    description: Staged personal expense vendors
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: proveedor_personal_nro
+        tests: [unique, not_null]
+      - name: nombre_proveedor
+        tests: [unique, not_null]
+
+  - name: stg_dim_trabajador
+    description: Staged workers and contractors
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: trabajador_nro
+        tests: [unique, not_null]
+      - name: nombre_completo
+        tests: [unique, not_null]
+      - name: tipo_personal
+        tests:
+          - accepted_values:
+              values: ['ALBAÑIL', 'ELECTRICISTA', 'PLOMERO', 'PINTOR', 'HERRERO', 'SUBCONTRATISTA', 'OFICINA', 'AYUDANTE']
+              config:
+                severity: warn
+      - name: rubro_id
+        tests:
+          - relationships:
+              to: ref('stg_dim_rubro')
+              field: airtable_id
+
+  - name: stg_dim_rubro
+    description: Staged expense categories
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: rubro_nro
+        tests: [unique, not_null]
+      - name: rubro
+        description: Category code (ALB, ELEC, PLOM, etc.)
+        tests: [unique, not_null]
+
+  - name: stg_dim_sector
+    description: Staged project sectors/areas
+    columns:
+      - name: airtable_id
+        tests: [unique, not_null]
+      - name: sector_nro
+        tests: [unique, not_null]
+      - name: obra_id
+        description: Airtable record ID linking to dim_obras
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_dim_obras')
+              field: airtable_id

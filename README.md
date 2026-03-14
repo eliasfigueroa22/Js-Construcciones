@@ -401,3 +401,130 @@ Elias Figueroa
 ---
 
 *This project was completed as part of my data analyst portfolio. It demonstrates end-to-end data architecture: from messy legacy systems to a clean, maintainable, and scalable solution.*
+
+---
+
+## v2.0 - Analytics Layer (dbt + DuckDB)
+
+Building on top of v1.0 (production), v2.0 adds an analytical warehouse using **dbt + DuckDB** — zero infrastructure, fully reproducible, and designed to showcase SQL and data modeling skills.
+
+### v2.0 Architecture
+
+```
+Airtable (production)
+    │
+    ▼
+Python Extract (pyairtable)
+    │
+    ▼
+DuckDB (raw schema) ──► dbt (staging → intermediate → marts)
+    │                                        │
+    ▼                                        ▼
+Analytics                            dbt tests + docs
+├── SQL Queries (showcase)
+└── Jupyter EDA (insights)
+```
+
+### What v2.0 Adds
+
+| Component | Details |
+|-----------|---------|
+| **Warehouse** | DuckDB (local, zero-config) |
+| **Transformations** | dbt-core with 27 SQL models |
+| **Staging** | 16 models — type casting, snake_case, TRIM+UPPER on FKs |
+| **Intermediate** | 4 enriched models — joins across fact + dimension tables |
+| **Marts** | 7 analytical models — Pareto, trends, budget deviation, rankings |
+| **Data Quality** | dbt tests (unique, not_null, relationships, accepted_values) + 3 custom tests |
+| **Analytics** | 5 showcase SQL queries + Jupyter EDA notebook |
+
+### v2.0 dbt Models
+
+**Staging (views):** 16 models mapping raw Airtable extracts to clean, typed, snake_case tables.
+
+**Intermediate (views):**
+- `int_compras_enriched` — purchases + obra + proveedor + rubro + sector
+- `int_pagos_enriched` — payments + obra + trabajador + rubro + sector
+- `int_subcontratista_flow` — budget → invoicing → payments with pending balance
+- `int_obra_gastos_totales` — materials + labor + income aggregated per obra
+
+**Marts (tables):**
+- `fct_gasto_por_obra` — financial summary per project with ranking
+- `fct_costo_por_rubro` — cost breakdown by category within each project
+- `fct_proveedor_analytics` — supplier Pareto (80/20) analysis
+- `fct_trabajador_analytics` — worker productivity and debt tracking
+- `fct_desviacion_presupuesto` — budget vs actual with deviation classification
+- `fct_tendencia_mensual` — monthly trend with MoM variation (LAG)
+- `dim_obras_enriched` — enriched project dimension with aggregated metrics
+
+### v2.0 dbt Lineage (DAG)
+
+![dbt DAG overview](Photos/dbt_dag_overview.png)
+*Full model lineage: 16 staging → 4 intermediate → 7 marts*
+
+![fct_gasto_por_obra lineage](Photos/dbt_dag_fct_gasto_por_obra.png)
+*Example flow: raw sources → staging → int_obra_gastos_totales → fct_gasto_por_obra*
+
+### SQL Showcase Queries
+
+1. **Pareto de Proveedores** — ABC classification with cumulative window functions
+2. **Tendencia Mensual** — LAG-based month-over-month variation + YTD accumulation
+3. **Rentabilidad por Obra** — Multi-CTE profitability ranking with contract execution %
+4. **Concentración de Gasto por Rubro** — PARTITION BY ranking with cumulative % within each project
+5. **Productividad de Trabajadores** — Worker analytics with debt tracking and monthly averages
+
+### How to Run v2.0
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Set up credentials
+cp .env.example .env
+# Edit .env with your Airtable API token and base ID
+
+# 3. Extract data from Airtable → DuckDB
+python -m v2_analytics.extract.airtable_to_duckdb
+
+# 4. Install dbt packages and run the pipeline
+cd v2_analytics/dbt_project
+dbt deps
+dbt run
+dbt test
+
+# 5. Generate documentation
+dbt docs generate
+dbt docs serve
+```
+
+### v2.0 Project Structure
+
+```
+v2_analytics/
+├── extract/
+│   ├── config.py                  # Airtable table ID mapping
+│   └── airtable_to_duckdb.py     # Extract script (full refresh)
+├── warehouse/                     # DuckDB file (gitignored)
+├── dbt_project/
+│   ├── dbt_project.yml
+│   ├── profiles.yml
+│   ├── packages.yml               # dbt_utils
+│   ├── macros/                    # clean_percentage, guaranies_format
+│   ├── models/
+│   │   ├── staging/               # 16 stg_ models + sources + tests
+│   │   ├── intermediate/          # 4 int_ models
+│   │   └── marts/                 # 7 fct_/dim_ models
+│   └── tests/                     # Custom data quality tests
+└── analytics/
+    ├── queries/                   # 5 SQL showcase queries
+    └── notebooks/                 # Jupyter EDA
+```
+
+### Tech Stack (v2.0)
+
+| Tool | Purpose |
+|------|---------|
+| dbt-core | SQL transformations, testing, documentation |
+| DuckDB | Analytical warehouse (local, zero-config) |
+| pyairtable | Airtable API extraction with pagination |
+| Python | Extract orchestration |
+| Jupyter + matplotlib + seaborn | EDA and visualization |

@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: fct_gasto_por_obra
+    description: Financial summary per obra with ranking and % of total spend
+
+  - name: fct_costo_por_rubro
+    description: Cost breakdown by rubro (category) with ranking within each obra
+
+  - name: fct_proveedor_analytics
+    description: Supplier Pareto analysis (80/20), frequency, concentration
+
+  - name: fct_trabajador_analytics
+    description: Worker productivity, advances, and active debts
+
+  - name: fct_desviacion_presupuesto
+    description: Budget vs actual with deviation classification
+
+  - name: fct_tendencia_mensual
+    description: Monthly trend with LAG variation percentage
+
+  - name: dim_obras_enriched
+    description: Enriched obra dimension with aggregated financial metrics

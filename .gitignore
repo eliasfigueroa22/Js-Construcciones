@@ -1,0 +1,31 @@
+# Environment
+.env
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# dbt
+v2_analytics/dbt_project/target/
+v2_analytics/dbt_project/dbt_packages/
+v2_analytics/dbt_project/logs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/

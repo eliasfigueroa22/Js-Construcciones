@@ -1,0 +1,19 @@
+# JS Construcciones v2.0 - Analytics Layer
+# pip install -r requirements.txt
+
+# dbt + DuckDB
+dbt-core>=1.7,<2.0
+dbt-duckdb>=1.7,<2.0
+
+# Extract layer
+duckdb>=0.10
+pyairtable>=2.0
+python-dotenv>=1.0
+
+# Data processing
+pandas>=2.0
+
+# Analytics / EDA
+jupyter>=1.0
+matplotlib>=3.7
+seaborn>=0.13

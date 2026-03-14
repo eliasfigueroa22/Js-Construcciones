@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: int_compras_enriched
+    description: Purchases joined with obra, proveedor, rubro, and sector dimensions
+
+  - name: int_pagos_enriched
+    description: Payments joined with obra, trabajador, rubro, and sector dimensions
+
+  - name: int_subcontratista_flow
+    description: Subcontractor budget → invoicing → payments with pending balance
+
+  - name: int_obra_gastos_totales
+    description: Total materials + labor + income aggregated per obra

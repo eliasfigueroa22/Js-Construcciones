@@ -1,0 +1,39 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Raw tables extracted from Airtable via pyairtable
+    tables:
+      - name: fact_compra
+        description: Material purchases across all construction projects
+      - name: fact_pago
+        description: Payments to workers and contractors
+      - name: fact_ingreso
+        description: Client payments and project income
+      - name: fact_deuda
+        description: Worker debts and advances
+      - name: fact_pago_deuda
+        description: Debt payment tracking
+      - name: fact_presupuesto_cliente
+        description: Client budgets and quotes
+      - name: fact_presupuesto_subcontratista
+        description: Subcontractor budget tracking
+      - name: fact_facturacion_subcontratista
+        description: Subcontractor invoicing and certificates
+      - name: fact_compras_personal
+        description: Owner personal expense purchases
+      - name: dim_obras
+        description: Construction projects
+      - name: dim_clientes
+        description: Company clients
+      - name: dim_proveedores
+        description: Company material/service suppliers
+      - name: dim_proveedores_personal
+        description: Personal expense vendors
+      - name: dim_trabajador
+        description: Workers and contractors
+      - name: dim_rubro
+        description: Expense categories (rubros)
+      - name: dim_sector
+        description: Project sectors/areas
