@@ -376,18 +376,16 @@ These are some features that could be easily implemented with the structure alre
 js-construcciones-data-architecture/
 │
 ├── README.md
-├── Photos/
-│   └── (your images)
-│
-├── docs/
-│   ├── data-model.md
-│   ├── data-dictionary.md
-│   ├── scripts/
-│   │   └── fuzzy_matching.py
-│   ├── queries/
-│   │   └── airtable_connection.m
-│   └── samples/
-│       └── schema_example.json
+├── .env.example               # Environment variable template
+├── requirements.txt
+├── Photos/                    # Project photos
+├── files/
+│   ├── data-model.md          # Dimensional model documentation
+│   ├── data-dictionary.md     # Field-level data dictionary
+│   ├── fuzzy_matching.py      # v1.0 deduplication script
+│   ├── airtable_connection.m  # Power Query M connection script
+│   └── schema_example.json    # Airtable schema reference
+└── v2_analytics/              # Analytical layer (see v2.0 section below)
 ```
 
 ---
@@ -535,7 +533,8 @@ v2_analytics/
 │   └── tests/                     # Custom data quality tests
 └── analytics/
     ├── queries/                   # 5 SQL showcase queries
-    └── notebooks/                 # Jupyter EDA
+    ├── notebooks/                 # Jupyter EDA notebook
+    └── looker_data/               # 8 CSVs exported for Looker Studio
 ```
 
 ### Tech Stack (v2.0)

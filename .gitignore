@@ -11,6 +11,9 @@ v2_analytics/warehouse/*.duckdb.wal
 v2_analytics/dbt_project/target/
 v2_analytics/dbt_project/dbt_packages/
 v2_analytics/dbt_project/logs/
+v2_analytics/dbt_project/.user.yml
+v2_analytics/dbt_project/package-lock.yml
+logs/
 
 # Python
 __pycache__/
