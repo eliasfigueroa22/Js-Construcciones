@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Airtable__list_tables_for_base",
+      "mcp__claude_ai_Supabase__list_projects"
+    ]
+  }
+}
